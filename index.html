@@ -6836,13 +6836,27 @@
 
         function selectAllSpells() {
             const checkboxes = document.querySelectorAll('#spellContent input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = true);
+            checkboxes.forEach(cb => {
+                // Exclure les checkboxes des options de manifestation
+                if (cb.id !== 'autoManifestationDefault' && 
+                    cb.id !== 'randomManifestationEachTime' && 
+                    cb.id !== 'chooseManifestationFirstTime') {
+                    cb.checked = true;
+                }
+            });
             updateValidateButton();
         }
 
         function deselectAllSpells() {
             const checkboxes = document.querySelectorAll('#spellContent input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = false);
+            checkboxes.forEach(cb => {
+                // Exclure les checkboxes des options de manifestation
+                if (cb.id !== 'autoManifestationDefault' && 
+                    cb.id !== 'randomManifestationEachTime' && 
+                    cb.id !== 'chooseManifestationFirstTime') {
+                    cb.checked = false;
+                }
+            });
             updateValidateButton();
         }
 
