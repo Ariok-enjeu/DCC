@@ -249,6 +249,166 @@
             margin-left: 10px;
         }
 
+        /* Animations pour l'incantation */
+        @keyframes castPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 5px 15px rgba(138,43,226,0.5), inset 0 1px 0 rgba(218,112,214,0.2);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 10px 30px rgba(138,43,226,1), inset 0 1px 0 rgba(218,112,214,0.4);
+            }
+        }
+
+        @keyframes magicFlash {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        @keyframes magicRipple {
+            0% { 
+                width: 0; 
+                height: 0; 
+                opacity: 1; 
+            }
+            100% { 
+                width: 500px; 
+                height: 500px; 
+                opacity: 0; 
+            }
+        }
+
+        @keyframes particleFloat {
+            0% { 
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                transform: translateY(-200px) translateX(var(--float-x)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .casting-animation {
+            animation: castPulse 0.6s ease-in-out;
+        }
+
+        .magic-flash {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(218,112,214,0.8) 0%, rgba(138,43,226,0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: magicFlash 0.8s ease-out;
+        }
+
+        .magic-ripple {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid rgba(218,112,214,0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: magicRipple 1s ease-out;
+        }
+
+        .magic-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(218,112,214,1) 0%, rgba(138,43,226,0.8) 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            animation: particleFloat 2s ease-out forwards;
+            box-shadow: 0 0 10px rgba(218,112,214,0.8);
+        }
+
+        .magic-particle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        /* Animation pour les sorts qui volent vers la sidebar */
+        @keyframes flyToSidebar {
+            0% { 
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            20% {
+                transform: translate(0, -20px) scale(1.2) rotate(90deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--target-x), var(--target-y)) scale(0.3) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .flying-spell {
+            position: fixed;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #9370db, #da70d6);
+            color: #fff;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            font-family: 'MedievalSharp', cursive;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(218,112,214,0.8), 0 0 40px rgba(138,43,226,0.6);
+            z-index: 10000;
+            pointer-events: none;
+            animation: flyToSidebar 1.5s ease-in-out forwards;
+            white-space: nowrap;
+        }
+
+        .flying-spell::before {
+            content: '✨';
+            margin-right: 8px;
+            font-size: 1.2em;
+            animation: spin 1s linear infinite;
+        }
+
+        .flying-spell::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
+            border-radius: 8px;
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
         .cast-button:hover {
             background: linear-gradient(to bottom, #5b1092 0%, #3d105e 100%);
             transform: translateY(-2px);
@@ -496,8 +656,24 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <h2>Grimoire Arcanique</h2>
-            <div id="wizardNameDisplay" style="text-align: center; color: #ffd700; font-family: 'MedievalSharp', cursive; font-size: 1.3em; margin-top: 5px; margin-bottom: 20px; font-style: italic; padding: 5px 10px; word-wrap: break-word; overflow-wrap: break-word; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);"></div>
+            <h2 style="text-align: center;">Grimoire Arcanique</h2>
+            <div id="wizardNameDisplay" style="text-align: center; color: #ffd700; font-family: 'MedievalSharp', cursive; font-size: 1.3em; margin-top: 5px; margin-bottom: 20px; font-style: italic; padding: 5px 10px; word-wrap: break-word; overflow-wrap: break-word; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); border: 2px solid #4b0082; border-radius: 5px; background: rgba(75,0,130,0.1);"></div>
+            <div style="border: 2px solid #4b0082; border-radius: 5px; padding: 10px; background: rgba(75,0,130,0.1); margin-bottom: 10px;">
+                <div>
+                    <label>&nbsp;&nbsp;Modificateur INT :</label>
+                    <span id="intModifier">0</span>
+                </div>
+
+                <div>
+                    <label>Niveau Incantateur :</label>
+                    <span id="casterLevel">1</span>
+                </div>
+
+                <div>
+                    <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bonus Chance :</label>
+                    <span id="luckModifier">0</span>
+                </div>
+            </div>
             <h3 onclick="toggleLevel(1)">Sorts Niveau 1</h3>
             <div id="level1-spells" class="level-spells" style="display: none;">
                 <!-- Les boutons seront générés dynamiquement -->
@@ -534,24 +710,10 @@
 
         <div class="main-content">
             <div class="spell-caster" style="display: none;">
-                <h3>Lancer un Sort</h3>
+                <button onclick="closeSpellCaster()" style="position: absolute; top: 10px; right: 10px; background: #8b0000; color: white; border: none; border-radius: 5px; padding: 10px; cursor: pointer; font-size: 1.2em;">✕</button>
+                <h3 style="text-align: center; margin-top: 20px;">Lancer un Sort</h3>
                 
                 <div class="casting-controls">
-                    <div>
-                        <label>Modificateur INT :</label>
-                        <input type="number" id="intModifier" value="0" min="-5" max="10" readonly style="background-color: rgba(147, 112, 219, 0.2); cursor: not-allowed;">
-                    </div>
-
-                    <div>
-                        <label>Niveau Incantateur :</label>
-                        <input type="number" id="casterLevel" value="1" min="1" max="10" readonly style="background-color: rgba(147, 112, 219, 0.2); cursor: not-allowed;">
-                    </div>
-
-                    <div>
-                        <label>Bonus Chance :</label>
-                        <input type="number" id="luckModifier" value="0" min="-5" max="5" readonly style="background-color: rgba(147, 112, 219, 0.2); cursor: not-allowed;">
-                    </div>
-
                     <div>
                         <label>Brûlesort :</label>
                         <input type="number" id="spellburn" value="0" min="0" max="20">
@@ -4997,11 +5159,242 @@
             castSpellWithDayNight(isFavorable);
         }
 
+        function createCastingEffect(isFailure = false) {
+            const button = document.querySelector('.cast-button');
+            
+            // Ajouter l'animation au bouton
+            button.classList.add('casting-animation');
+            setTimeout(() => button.classList.remove('casting-animation'), 600);
+            
+            // Obtenir la position du bouton
+            const rect = button.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            if (isFailure) {
+                // ===== ANIMATION D'ÉCHEC =====
+                
+                // Flash sombre/rouge pour l'échec
+                const flash = document.createElement('div');
+                flash.className = 'magic-flash';
+                flash.style.left = centerX + 'px';
+                flash.style.top = centerY + 'px';
+                flash.style.background = 'radial-gradient(circle, rgba(139,0,0,0.9) 0%, rgba(80,0,0,0.5) 50%, transparent 100%)';
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), 800);
+                
+                // Ondes d'énergie qui se rétractent (implosion)
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const ripple = document.createElement('div');
+                        ripple.style.position = 'fixed';
+                        ripple.style.left = centerX + 'px';
+                        ripple.style.top = centerY + 'px';
+                        ripple.style.transform = 'translate(-50%, -50%)';
+                        ripple.style.width = '300px';
+                        ripple.style.height = '300px';
+                        ripple.style.border = '3px solid rgba(139,0,0,0.8)';
+                        ripple.style.borderRadius = '50%';
+                        ripple.style.pointerEvents = 'none';
+                        ripple.style.zIndex = '9998';
+                        ripple.style.opacity = '1';
+                        
+                        // Animation d'implosion (contraire de l'expansion)
+                        let scale = 1;
+                        let opacity = 1;
+                        const animate = () => {
+                            scale -= 0.02;
+                            opacity -= 0.02;
+                            if (scale > 0) {
+                                ripple.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                                ripple.style.opacity = opacity;
+                                requestAnimationFrame(animate);
+                            } else {
+                                ripple.remove();
+                            }
+                        };
+                        requestAnimationFrame(animate);
+                        
+                        document.body.appendChild(ripple);
+                    }, i * 200);
+                }
+                
+                // Particules qui tombent (au lieu de s'envoler)
+                const particleCount = 25;
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.style.position = 'fixed';
+                        particle.style.pointerEvents = 'none';
+                        particle.style.zIndex = '9997';
+                        
+                        // Position de départ (autour du bouton)
+                        const angle = (i / particleCount) * Math.PI * 2;
+                        const radius = 20 + Math.random() * 30;
+                        const startX = centerX + Math.cos(angle) * radius;
+                        const startY = centerY + Math.sin(angle) * radius;
+                        
+                        particle.style.left = startX + 'px';
+                        particle.style.top = startY + 'px';
+                        
+                        // Taille aléatoire
+                        const size = 4 + Math.random() * 8;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        
+                        // Couleurs sombres pour l'échec (rouge, noir, gris)
+                        const colors = [
+                            'radial-gradient(circle, rgba(139,0,0,1) 0%, rgba(80,0,0,0.8) 100%)',
+                            'radial-gradient(circle, rgba(50,50,50,1) 0%, rgba(20,20,20,0.8) 100%)',
+                            'radial-gradient(circle, rgba(100,0,0,1) 0%, rgba(60,0,0,0.8) 100%)'
+                        ];
+                        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.borderRadius = '50%';
+                        particle.style.boxShadow = '0 0 10px rgba(139,0,0,0.8)';
+                        
+                        document.body.appendChild(particle);
+                        
+                        // Animation de chute
+                        let y = 0;
+                        let x = (Math.random() - 0.5) * 50;
+                        let opacity = 1;
+                        let rotation = 0;
+                        const gravity = 2;
+                        let velocity = Math.random() * 2 + 1;
+                        
+                        const fall = () => {
+                            y += velocity;
+                            velocity += gravity * 0.1;
+                            opacity -= 0.012;
+                            rotation += 5;
+                            
+                            if (opacity > 0) {
+                                particle.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+                                particle.style.opacity = opacity;
+                                requestAnimationFrame(fall);
+                            } else {
+                                particle.remove();
+                            }
+                        };
+                        requestAnimationFrame(fall);
+                    }, i * 30);
+                }
+                
+                // Effet de fumée sombre qui se dissipe
+                const smoke = document.createElement('div');
+                smoke.style.position = 'fixed';
+                smoke.style.left = centerX + 'px';
+                smoke.style.top = centerY + 'px';
+                smoke.style.transform = 'translate(-50%, -50%)';
+                smoke.style.width = '100px';
+                smoke.style.height = '100px';
+                smoke.style.background = 'radial-gradient(circle, rgba(50,50,50,0.6) 0%, transparent 70%)';
+                smoke.style.borderRadius = '50%';
+                smoke.style.pointerEvents = 'none';
+                smoke.style.zIndex = '9996';
+                smoke.style.filter = 'blur(20px)';
+                document.body.appendChild(smoke);
+                
+                let smokeScale = 1;
+                let smokeOpacity = 0.6;
+                const smokeAnim = () => {
+                    smokeScale += 0.05;
+                    smokeOpacity -= 0.015;
+                    if (smokeOpacity > 0) {
+                        smoke.style.transform = `translate(-50%, -50%) scale(${smokeScale})`;
+                        smoke.style.opacity = smokeOpacity;
+                        requestAnimationFrame(smokeAnim);
+                    } else {
+                        smoke.remove();
+                    }
+                };
+                requestAnimationFrame(smokeAnim);
+                
+            } else {
+                // ===== ANIMATION DE SUCCÈS (ORIGINAL) =====
+                
+                // Créer le flash lumineux
+                const flash = document.createElement('div');
+                flash.className = 'magic-flash';
+                flash.style.left = centerX + 'px';
+                flash.style.top = centerY + 'px';
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), 800);
+                
+                // Créer les ondes d'énergie
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const ripple = document.createElement('div');
+                        ripple.className = 'magic-ripple';
+                        ripple.style.left = centerX + 'px';
+                        ripple.style.top = centerY + 'px';
+                        document.body.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 1000);
+                    }, i * 200);
+                }
+                
+                // Créer les particules magiques
+                const particleCount = 30;
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'magic-particle';
+                        
+                        // Position de départ (autour du bouton)
+                        const angle = (i / particleCount) * Math.PI * 2;
+                        const radius = 20 + Math.random() * 30;
+                        const startX = centerX + Math.cos(angle) * radius;
+                        const startY = centerY + Math.sin(angle) * radius;
+                        
+                        particle.style.left = startX + 'px';
+                        particle.style.top = startY + 'px';
+                        
+                        // Direction aléatoire pour le mouvement
+                        const floatX = (Math.random() - 0.5) * 200;
+                        particle.style.setProperty('--float-x', floatX + 'px');
+                        
+                        // Taille et couleur aléatoires
+                        const size = 4 + Math.random() * 8;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        
+                        // Couleurs variées (violet, rose, doré)
+                        const colors = [
+                            'radial-gradient(circle, rgba(218,112,214,1) 0%, rgba(138,43,226,0.8) 100%)',
+                            'radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,140,0,0.8) 100%)',
+                            'radial-gradient(circle, rgba(147,112,219,1) 0%, rgba(75,0,130,0.8) 100%)'
+                        ];
+                        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        // Délai d'animation aléatoire
+                        const delay = Math.random() * 0.3;
+                        particle.style.animationDelay = delay + 's';
+                        
+                        document.body.appendChild(particle);
+                        setTimeout(() => particle.remove(), 2300);
+                    }, i * 30);
+                }
+            }
+        }
+
         function castSpell() {
-            const intMod = parseInt(document.getElementById('intModifier').value) || 0;
-            const casterLevel = parseInt(document.getElementById('casterLevel').value) || 1;
+            // Make the spell caster full screen
+            const caster = document.querySelector('.spell-caster');
+            caster.style.position = 'fixed';
+            caster.style.top = '0';
+            caster.style.left = '0';
+            caster.style.width = '100vw';
+            caster.style.height = '100vh';
+            caster.style.background = 'rgba(15, 8, 32, 0.95)';
+            caster.style.zIndex = '1000';
+            caster.style.overflowY = 'auto';
+            caster.style.padding = '20px';
+            caster.style.boxSizing = 'border-box';
+
+            const intMod = parseInt(document.getElementById('intModifier').textContent) || 0;
+            const casterLevel = parseInt(document.getElementById('casterLevel').textContent) || 1;
             const spellburn = parseInt(document.getElementById('spellburn').value) || 0;
-            const luckMod = parseInt(document.getElementById('luckModifier').value) || 0;
+            const luckMod = parseInt(document.getElementById('luckModifier').textContent) || 0;
             const magicBonus = parseInt(document.getElementById('magicBonus').value) || 0;
             
             // Obtenir l'effet mercuriel pour déterminer le dé à utiliser
@@ -5087,10 +5480,10 @@
         
         // Fonction pour continuer le lancement après le choix jour/nuit
         function castSpellWithDayNight(isFavorable) {
-            const intMod = parseInt(document.getElementById('intModifier').value) || 0;
-            const casterLevel = parseInt(document.getElementById('casterLevel').value) || 1;
+            const intMod = parseInt(document.getElementById('intModifier').textContent) || 0;
+            const casterLevel = parseInt(document.getElementById('casterLevel').textContent) || 1;
             const spellburn = parseInt(document.getElementById('spellburn').value) || 0;
-            const luckMod = parseInt(document.getElementById('luckModifier').value) || 0;
+            const luckMod = parseInt(document.getElementById('luckModifier').textContent) || 0;
             const magicBonus = parseInt(document.getElementById('magicBonus').value) || 0;
             
             // Définir le dé selon la période
@@ -5273,6 +5666,9 @@
             
             // Obtenir la manifestation du sort (uniquement si ce n'est pas un échec)
             const isFailure = effect.toLowerCase().includes('échec');
+            
+            // Créer l'effet visuel d'incantation (succès ou échec)
+            createCastingEffect(isFailure);
             const manifestation = !isFailure ? getSpellManifestation(currentSpell) : null;
             
             // Si la manifestation doit être choisie, afficher le modal et arrêter ici
@@ -5300,12 +5696,14 @@
 
             // Section pour dépenser des points de Chance (pas disponible sur échec critique)
             let luckSection = `
-    <div style="margin-top: 20px; padding: 15px; border: 2px solid #9370db; border-radius: 5px; background: rgba(147,112,219,0.1);">
-        <label style="color: #9370db; font-weight: bold;">Dépenser des points de Chance :</label>
-        <input type="number" id="luckSpent" min="0" value="0" style="width: 60px; margin: 0 10px; padding: 5px; border: 2px solid #9370db; border-radius: 3px;">
-        <button onclick="applyLuckBonus(${d20Roll}, ${intMod}, ${casterLevel}, ${spellburn}, ${magicBonus}, ${isCritical})" style="padding: 5px 15px; background: #9370db; color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: bold;">
-            Appliquer
-        </button>
+    <div style="margin-top: 20px; text-align: center;">
+        <div style="display: inline-block; padding: 15px; border: 2px solid #9370db; border-radius: 5px; background: rgba(147,112,219,0.1);">
+            <label style="color: #9370db; font-weight: bold;">Dépenser des points de Chance :</label>
+            <input type="number" id="luckSpent" min="0" value="0" style="width: 60px; margin: 0 10px; padding: 5px; border: 2px solid #9370db; border-radius: 3px;">
+            <button onclick="applyLuckBonus(${d20Roll}, ${intMod}, ${casterLevel}, ${spellburn}, ${magicBonus}, ${isCritical}, ${mercurialBonus})" style="padding: 5px 15px; background: #9370db; color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: bold;">
+                Appliquer
+            </button>
+        </div>
     </div>
 `;
 
@@ -5326,7 +5724,7 @@
             highlightEntry(total);
         }
 
-        function applyLuckBonus(d20Roll, intMod, casterLevel, spellburn, magicBonus, wasCritical) {
+        function applyLuckBonus(d20Roll, intMod, casterLevel, spellburn, magicBonus, wasCritical, mercurialBonus = 0) {
             const luckSpent = parseInt(document.getElementById('luckSpent').value) || 0;
             
             if (luckSpent === 0) {
@@ -5354,11 +5752,11 @@
             
             // Mettre à jour le champ dans l'interface spell-caster
             if (document.getElementById('luckModifier')) {
-                document.getElementById('luckModifier').value = newLuckMod;
+                document.getElementById('luckModifier').textContent = newLuckMod;
             }
 
-            // Recalculer le total avec les points de Chance
-            let total = d20Roll + intMod + casterLevel + spellburn + magicBonus + luckSpent;
+            // Recalculer le total avec les points de Chance ET le bonus mercuriel
+            let total = d20Roll + intMod + casterLevel + spellburn + magicBonus + mercurialBonus + luckSpent;
             
             // Ajouter le bonus de critique si c'était un critique
             if (wasCritical) {
@@ -5397,10 +5795,15 @@
                 </div>`;
             }
 
+            let mercurialBonusText = '';
+            if (mercurialBonus !== 0) {
+                mercurialBonusText = mercurialBonus > 0 ? ` + Mercuriel ${mercurialBonus}` : ` - Mercuriel ${Math.abs(mercurialBonus)}`;
+            }
+
             document.getElementById('resultDisplay').innerHTML = `
     ${manifestationText}
     <div class="roll-result">
-        ✦ 1d20 : ${d20Roll} + INT ${intMod} + NI ${casterLevel} ${spellburn > 0 ? '+ Brûlesort ' + spellburn : ''} ${magicBonus !== 0 ? (magicBonus > 0 ? '+ Bonus ' + magicBonus : '- Malus ' + Math.abs(magicBonus)) : ''} ${luckSpent > 0 ? '+ Chance ' + luckSpent : ''} = ${total}
+        ✦ 1d20 : ${d20Roll} + INT ${intMod} + NI ${casterLevel} ${spellburn > 0 ? '+ Brûlesort ' + spellburn : ''} ${magicBonus !== 0 ? (magicBonus > 0 ? '+ Bonus ' + magicBonus : '- Malus ' + Math.abs(magicBonus)) : ''}${mercurialBonusText} ${luckSpent > 0 ? '+ Chance ' + luckSpent : ''} = ${total}
     </div>
     ${criticalText}
     ${spellburnText}
@@ -5820,7 +6223,7 @@
             // Si c'est une corruption générale, lancer sur la table correspondante
             if (isGeneralCorruption) {
                 const generalTable = generalCorruption[generalCorruptionType];
-                const luckMod = parseInt(document.getElementById('luckModifier').value) || 0;
+                const luckMod = parseInt(document.getElementById('luckModifier').textContent) || 0;
                 const spellLevel = spell.level;
                 
                 // Formule : 1d10 - niveau du sort + modificateur de Chance
@@ -5924,7 +6327,7 @@
             
             // Mettre à jour le champ dans l'interface spell-caster
             if (document.getElementById('luckModifier')) {
-                document.getElementById('luckModifier').value = newLuckMod;
+                document.getElementById('luckModifier').textContent = newLuckMod;
             }
             
             resultDiv.innerHTML = `
@@ -6244,7 +6647,7 @@
             let selectionHTML = `
                 <div style="padding: 30px; background: rgba(75, 0, 130, 0.2); border-radius: 10px; margin: 20px;">
                     <h2 style="color: #ffd700; text-align: center; font-family: 'MedievalSharp', cursive; margin-bottom: 20px;">
-                        📖 Sélection des sorts connus
+                        📖 Constituez votre grimoire
                     </h2>
                     
                     <div style="background: rgba(139, 0, 139, 0.3); padding: 20px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #9370db;">
@@ -6523,13 +6926,13 @@
             
             // Mettre à jour les champs d'incantation avec les nouvelles valeurs
             if (document.getElementById('intModifier')) {
-                document.getElementById('intModifier').value = wizardIntMod;
+                document.getElementById('intModifier').textContent = wizardIntMod;
             }
             if (document.getElementById('casterLevel')) {
-                document.getElementById('casterLevel').value = wizardCasterLevel;
+                document.getElementById('casterLevel').textContent = wizardCasterLevel;
             }
             if (document.getElementById('luckModifier')) {
-                document.getElementById('luckModifier').value = wizardLuckMod;
+                document.getElementById('luckModifier').textContent = wizardLuckMod;
             }
             
             // Si aucun sort n'est sélectionné, réafficher la sélection avec un message d'avertissement
@@ -6548,18 +6951,105 @@
             
             localStorage.setItem('knownSpells', JSON.stringify(selectedSpells));
             
-            // Réinitialiser les boutons de sorts
-            initializeSpellButtons();
-            
-            // Afficher un message de confirmation
-            document.getElementById('spellContent').innerHTML = `
-                <div style="text-align: center; padding: 50px; color: #d8bfd8; font-family: 'MedievalSharp', cursive; font-size: 1.5em;">
-                    <p style="color: #ffd700;">✨ Sélection enregistrée avec succès !</p>
-                    <p>Vous avez sélectionné ${selectedSpells.length} sort(s).</p>
-                    <p style="margin-top: 30px;">Choisissez un sort dans le Grimoire Arcanique pour commencer votre incantation.</p>
-                    <p>Que la magie vous guide...</p>
-                </div>
-            `;
+            // Créer l'animation des sorts qui volent vers la sidebar
+            animateSpellsToSidebar(selectedSpells, () => {
+                // Réinitialiser les boutons de sorts après l'animation
+                initializeSpellButtons();
+                
+                // Afficher un message de confirmation
+                document.getElementById('spellContent').innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: #d8bfd8; font-family: 'MedievalSharp', cursive; font-size: 1.5em;">
+                        <p style="color: #ffd700;">✨ Sélection enregistrée avec succès !</p>
+                        <p>Vous avez sélectionné ${selectedSpells.length} sort(s).</p>
+                        <p style="margin-top: 30px;">Choisissez un sort dans le Grimoire Arcanique pour commencer votre incantation.</p>
+                        <p>Que la magie vous guide...</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Fonction pour animer les sorts qui volent vers la sidebar
+        function animateSpellsToSidebar(selectedSpells, callback) {
+            if (selectedSpells.length === 0) {
+                if (callback) callback();
+                return;
+            }
+
+            // Obtenir les positions des checkboxes cochées
+            const checkboxes = document.querySelectorAll('#spellContent input[type="checkbox"]:checked');
+            const spellElements = Array.from(checkboxes).filter(cb => 
+                cb.id !== 'autoManifestationDefault' && 
+                cb.id !== 'randomManifestationEachTime' && 
+                cb.id !== 'chooseManifestationFirstTime'
+            );
+
+            // Obtenir la position de la sidebar
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarRect = sidebar.getBoundingClientRect();
+
+            let animationCount = 0;
+            const totalAnimations = spellElements.length;
+
+            spellElements.forEach((checkbox, index) => {
+                setTimeout(() => {
+                    const label = checkbox.closest('label');
+                    if (!label) return;
+
+                    // Obtenir la position de départ
+                    const startRect = label.getBoundingClientRect();
+                    const spellKey = checkbox.value;
+                    const spell = spells[spellKey];
+                    if (!spell) return;
+
+                    // Trouver la position cible dans la sidebar (le niveau correspondant)
+                    const levelHeader = Array.from(sidebar.querySelectorAll('h3'))
+                        .find(h3 => h3.textContent.includes(`Niveau ${spell.level}`));
+                    
+                    let targetRect;
+                    if (levelHeader) {
+                        targetRect = levelHeader.getBoundingClientRect();
+                    } else {
+                        // Position par défaut au centre de la sidebar si le niveau n'est pas trouvé
+                        targetRect = {
+                            left: sidebarRect.left + sidebarRect.width / 2,
+                            top: sidebarRect.top + sidebarRect.height / 2
+                        };
+                    }
+
+                    // Créer l'élément volant
+                    const flyingSpell = document.createElement('div');
+                    flyingSpell.className = 'flying-spell';
+                    flyingSpell.textContent = spell.name;
+                    flyingSpell.style.left = startRect.left + 'px';
+                    flyingSpell.style.top = startRect.top + 'px';
+
+                    // Calculer le déplacement
+                    const deltaX = targetRect.left - startRect.left;
+                    const deltaY = targetRect.top - startRect.top;
+                    flyingSpell.style.setProperty('--target-x', deltaX + 'px');
+                    flyingSpell.style.setProperty('--target-y', deltaY + 'px');
+
+                    document.body.appendChild(flyingSpell);
+
+                    // Supprimer l'élément après l'animation
+                    setTimeout(() => {
+                        flyingSpell.remove();
+                        animationCount++;
+                        
+                        // Appeler le callback quand toutes les animations sont terminées
+                        if (animationCount === totalAnimations && callback) {
+                            callback();
+                        }
+                    }, 1500);
+                }, index * 100); // Décalage de 100ms entre chaque sort
+            });
+
+            // Sécurité: appeler le callback même si quelque chose se passe mal
+            setTimeout(() => {
+                if (animationCount < totalAnimations && callback) {
+                    callback();
+                }
+            }, (totalAnimations * 100) + 2000);
         }
 
         // Initialisation au chargement de la page
@@ -6792,7 +7282,7 @@
             const wizardData = JSON.parse(localStorage.getItem('wizardData') || '{}');
             const nameDisplay = document.getElementById('wizardNameDisplay');
             if (nameDisplay && wizardData.name) {
-                nameDisplay.textContent = 'de ' + wizardData.name;
+                nameDisplay.textContent = wizardData.name;
             } else if (nameDisplay) {
                 nameDisplay.textContent = '';
             }
@@ -6840,6 +7330,22 @@
             }
         }
 
+        function closeSpellCaster() {
+            const caster = document.querySelector('.spell-caster');
+            caster.style.display = 'none';
+            // Reset styles
+            caster.style.position = '';
+            caster.style.top = '';
+            caster.style.left = '';
+            caster.style.width = '';
+            caster.style.height = '';
+            caster.style.background = '';
+            caster.style.zIndex = '';
+            caster.style.overflowY = '';
+            caster.style.padding = '';
+            caster.style.boxSizing = '';
+        }
+
         window.addEventListener('DOMContentLoaded', function() {
             const knownSpellsData = localStorage.getItem('knownSpells');
             const knownSpells = knownSpellsData ? JSON.parse(knownSpellsData) : null;
@@ -6850,13 +7356,13 @@
             // Charger les données du mage et pré-remplir les champs
             const wizardData = JSON.parse(localStorage.getItem('wizardData') || '{}');
             if (wizardData.intMod !== undefined) {
-                document.getElementById('intModifier').value = wizardData.intMod;
+                document.getElementById('intModifier').textContent = wizardData.intMod;
             }
             if (wizardData.casterLevel !== undefined) {
-                document.getElementById('casterLevel').value = wizardData.casterLevel;
+                document.getElementById('casterLevel').textContent = wizardData.casterLevel;
             }
             if (wizardData.luckMod !== undefined) {
-                document.getElementById('luckModifier').value = wizardData.luckMod;
+                document.getElementById('luckModifier').textContent = wizardData.luckMod;
             }
             
             // Si c'est la première fois ou si la liste est vide, afficher la sélection des sorts
